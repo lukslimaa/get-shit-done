@@ -172,12 +172,36 @@ If `found: true` (internal service), you MUST include these additional fields:
 
 If `found: false` (external service or not configured), use standard format without Repository/Local Path fields.
 
+**Standards-based conventions (for CONVENTIONS.md when quality focus) - OPTIONAL:**
+
+If you are writing CONVENTIONS.md and company standards are configured, you can generate conventions from official standards instead of inferring from code.
+
+Check if standards generation script exists:
+```bash
+ls $(npm root -g)/get-shit-done-cc/dist/scripts/generate-conventions.js 2>/dev/null
+```
+
+If it exists, try to generate conventions:
+```bash
+CONVENTIONS=$(node "$(npm root -g)/get-shit-done-cc/dist/scripts/generate-conventions.js" "$(pwd)" 2>/dev/null)
+if [ $? -eq 0 ]; then
+  echo "$CONVENTIONS" > .planning/codebase/CONVENTIONS.md
+else
+  # Standards not available, fall back to code analysis
+fi
+```
+
+If the script succeeds (exit code 0), it outputs the conventions content which you can use directly as CONVENTIONS.md.
+
+If the script fails (exit code 1) or standards_repo is not configured, fall back to standard convention analysis from codebase.
+
 **Template filling:**
 1. Replace `[YYYY-MM-DD]` with current date
 2. Replace `[Placeholder text]` with findings from exploration
 3. If something is not found, use "Not detected" or "Not applicable"
 4. Always include file paths with backticks
 5. For internal services, enrich with repository/local_path if available
+6. For conventions (quality focus), use standards generation if available
 
 Use the Write tool to create each document.
 </step>
